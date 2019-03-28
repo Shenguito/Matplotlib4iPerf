@@ -4,7 +4,6 @@ import os
 
 
 def run(file):
-    transfer_sender, bandwidth_sender, transfer_receiver, bandwidth_receiver = ""
     time = []
     transfer = []
     bandwidth = []
