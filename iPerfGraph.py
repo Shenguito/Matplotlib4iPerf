@@ -41,6 +41,24 @@ def run(file):
                 transfer.append(trans)
                 bandwidth.append(bw)
 
+    # if the iPerf is not completed
+    try:
+        transfer_sender
+    except NameError:
+        transfer_sender = "not finished"
+    try:
+        transfer_receiver
+    except NameError:
+        transfer_receiver = "not finished"
+    try:
+        bandwidth_sender
+    except NameError:
+        bandwidth_sender = "not finished"
+    try:
+        bandwidth_receiver
+    except NameError:
+        bandwidth_receiver = "not finished"
+
     show_transfer(time, transfer, transfer_sender, transfer_receiver, filename)
     show_bandwidth(time, bandwidth, bandwidth_sender, bandwidth_receiver, filename)
 
