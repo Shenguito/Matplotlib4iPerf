@@ -19,7 +19,7 @@ def run(file):
                 bandwidth_sender = "Time: " + t + " | Bandwidth: ~" + bw
             elif "receiver" in line:
                 line_split = line.split("/sec")
-                t = re.search('](.*)sec', line_split[0]).group(1).strip().split("-")[1].replace(" ", "")
+                t = re.search('](.*)sec', line_split[0]).group(1).strip().split("-")[1].replace(" ", "") + "sec"
                 trans = re.search('sec(.*)Bytes', line_split[0]).group(1).strip().replace(" ", "") + "Bytes"
                 bw = re.search('Bytes(.*)bits', line_split[0]).group(1).strip().replace(" ", "") + "bits/sec"
                 transfer_receiver = "Time: " + t + " | Transferred: " + trans
@@ -70,9 +70,10 @@ def show_transfer(time, transfer, transfer_sender, transfer_receiver, filename):
     plt.title("Sender: "+transfer_sender+"\n Receiver: "+transfer_receiver)
     plt.xlabel('time')
     plt.ylabel('transfer(Bytes)')
+    plt.tight_layout()
     # plt.show()
 
-    fig.savefig('output/qt_'+filename+'.png')
+    fig.savefig('output/'+filename+'_QT.png')
 
 
 def show_bandwidth(time, bandwidth, bandwidth_sender, bandwidth_receiver, filename):
@@ -82,9 +83,10 @@ def show_bandwidth(time, bandwidth, bandwidth_sender, bandwidth_receiver, filena
     plt.title("Sender: "+bandwidth_sender+"\n Receiver: "+bandwidth_receiver)
     plt.xlabel('time')
     plt.ylabel('bandwidth(bit/sec)')
+    plt.tight_layout()
     # plt.show()
 
-    fig.savefig('output/bw_'+filename+'.png')
+    fig.savefig('output/'+filename+'_BW.png')
 
 
 def unit_convert(value):
