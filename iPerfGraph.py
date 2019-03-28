@@ -1,13 +1,13 @@
-import matplotlib.pyplot as plt
 import re
 import os
+import matplotlib.pyplot as plt
 
 
 def run(file):
     time = []
     transfer = []
     bandwidth = []
-
+    filename = file.name.split("\\")[1]
     for line in file:
         if "sec" in line:
             if "sender" in line:
@@ -41,28 +41,32 @@ def run(file):
                 transfer.append(trans)
                 bandwidth.append(bw)
 
-    show_transfer(time, transfer, transfer_sender, transfer_receiver)
-    show_bandwidth(time, bandwidth, bandwidth_sender, bandwidth_receiver)
+    show_transfer(time, transfer, transfer_sender, transfer_receiver, filename)
+    show_bandwidth(time, bandwidth, bandwidth_sender, bandwidth_receiver, filename)
 
 
-def show_transfer(time, transfer, transfer_sender, transfer_receiver):
+def show_transfer(time, transfer, transfer_sender, transfer_receiver, filename):
+    fig = plt.figure()
 
     plt.plot(time, transfer)
     plt.title("Sender: "+transfer_sender+"\n Receiver: "+transfer_receiver)
     plt.xlabel('time')
     plt.ylabel('transfer(Bytes)')
+    # plt.show()
 
-    plt.show()
+    fig.savefig('output/qt_'+filename+'.png')
 
 
-def show_bandwidth(time, bandwidth, bandwidth_sender, bandwidth_receiver):
+def show_bandwidth(time, bandwidth, bandwidth_sender, bandwidth_receiver, filename):
+    fig = plt.figure()
 
     plt.plot(time, bandwidth)
     plt.title("Sender: "+bandwidth_sender+"\n Receiver: "+bandwidth_receiver)
     plt.xlabel('time')
     plt.ylabel('bandwidth(bit/sec)')
+    # plt.show()
 
-    plt.show()
+    fig.savefig('output/bw_'+filename+'.png')
 
 
 def unit_convert(value):
@@ -80,7 +84,7 @@ def unit_convert(value):
     return value
 
 
-def multifile():
+def multifiles():
     for filename in os.listdir("input"):
         with open(os.path.join("input", filename), "r") as file:
             run(file)
@@ -92,4 +96,4 @@ def singlefile():
 
 
 if __name__ == "__main__":
-    multifile()
+    multifiles()
