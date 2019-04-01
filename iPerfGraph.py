@@ -24,6 +24,9 @@ def run(file):
                 bw = re.search('Bytes(.*)bits', line_split[0]).group(1).strip().replace(" ", "") + "bits/sec"
                 transfer_receiver = "Time: " + t + " | Transferred: " + trans
                 bandwidth_receiver = "Time: " + t + " | Bandwidth: ~" + bw
+            elif "SUM" in line:
+                print("iPerf3 several connections")
+                return
             else:
                 # get time, transfer and bandwidth
                 line_split = line.split("/sec")
@@ -41,23 +44,22 @@ def run(file):
                 transfer.append(trans)
                 bandwidth.append(bw)
 
+        if "error" in line:
+            print("iPerf3 error")
+            return
+        if "interrupt" in line:
+            print("iPerf3 interrupted")
+            return
+
     # if the iPerf is not completed
     try:
         transfer_sender
-    except NameError:
-        transfer_sender = "not finished"
-    try:
         transfer_receiver
-    except NameError:
-        transfer_receiver = "not finished"
-    try:
         bandwidth_sender
-    except NameError:
-        bandwidth_sender = "not finished"
-    try:
         bandwidth_receiver
     except NameError:
-        bandwidth_receiver = "not finished"
+        print("not finished")
+        return
 
     show_transfer(time, transfer, transfer_sender, transfer_receiver, filename)
     show_bandwidth(time, bandwidth, bandwidth_sender, bandwidth_receiver, filename)
