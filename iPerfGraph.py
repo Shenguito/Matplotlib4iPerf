@@ -16,15 +16,15 @@ def run(file):
                 t = re.search('](.*)sec', line_split[0]).group(1).strip().split("-")[1].replace(" ", "") + "sec"
                 trans = re.search('sec(.*)Bytes', line_split[0]).group(1).strip().replace(" ", "") + "Bytes"
                 bw = re.search('Bytes(.*)bits', line_split[0]).group(1).strip().replace(" ", "") + "bits/sec"
-                transfer_sender = "Time: " + t + " | Transferred: "+trans
-                bandwidth_sender = "Time: " + t + " | Bandwidth: ~" + bw
+                transfer_sender = "Total Time: " + t + " | Total Transferred: "+trans
+                bandwidth_sender = "Total Time: " + t + " | Bandwidth: ~" + bw
             elif "receiver" in line:
                 line_split = line.split("/sec")
                 t = re.search('](.*)sec', line_split[0]).group(1).strip().split("-")[1].replace(" ", "") + "sec"
                 trans = re.search('sec(.*)Bytes', line_split[0]).group(1).strip().replace(" ", "") + "Bytes"
                 bw = re.search('Bytes(.*)bits', line_split[0]).group(1).strip().replace(" ", "") + "bits/sec"
-                transfer_receiver = "Time: " + t + " | Transferred: " + trans
-                bandwidth_receiver = "Time: " + t + " | Bandwidth: ~" + bw
+                transfer_receiver = "Total Time: " + t + " | Total Transferred: " + trans
+                bandwidth_receiver = "Total Time: " + t + " | Bandwidth: ~" + bw
             elif "SUM" in line:
                 print("iPerf3 several connections")
                 emptyfile("multi_conn_" + filename)
