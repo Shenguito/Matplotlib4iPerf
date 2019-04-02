@@ -1,6 +1,7 @@
 import re
 import os
 import matplotlib.pyplot as plt
+from matplotlib.ticker import EngFormatter
 
 
 def run(file):
@@ -31,7 +32,7 @@ def run(file):
                 # get time, transfer and bandwidth
                 line_split = line.split("/sec")
 
-                t = unit_convert(re.search('](.*)sec', line_split[0]).group(1).strip().split("-")[1].replace(" ", ""))
+                t = float(re.search('](.*)sec', line_split[0]).group(1).strip().split("-")[1].replace(" ", ""))
                 # print(t)
 
                 trans = unit_convert(re.search('sec(.*)Bytes', line_split[0]).group(1).strip().replace(" ", ""))
@@ -66,14 +67,21 @@ def run(file):
 
 
 def show_transfer(time, transfer, transfer_sender, transfer_receiver, filename):
-    fig = plt.figure()
+    # Figure width is doubled (2*6.4) to display nicely 2 subplots side by side.
+    fig, (ax) = plt.subplots(nrows=1, figsize=(12, 6))
 
-    plt.plot(time, transfer)
-    plt.title("Sender: "+transfer_sender+"\n Receiver: "+transfer_receiver)
-    plt.xlabel('time')
-    plt.ylabel('transfer(Bytes)')
+    plt.title("Sender: " + transfer_sender + "\n Receiver: " + transfer_receiver)
+
+    formatter = EngFormatter(places=1, sep="\N{THIN SPACE}")
+    ax.plot(time, transfer)
+
+    ax.yaxis.set_major_formatter(formatter)
+    ax.set_ylim(bottom=0)  # y label start at 0
+    ax.set_xlabel('time(sec)')
+    ax.set_ylabel('transfer(Bytes)')
+
     plt.tight_layout()
-    # plt.show()
+    plt.show()
 
     fig.savefig('output/'+filename+'_QT.png')
 
@@ -81,8 +89,12 @@ def show_transfer(time, transfer, transfer_sender, transfer_receiver, filename):
 def show_bandwidth(time, bandwidth, bandwidth_sender, bandwidth_receiver, filename):
     fig = plt.figure()
 
+    formatter = EngFormatter(unit='bit')
+
     plt.plot(time, bandwidth)
     plt.title("Sender: "+bandwidth_sender+"\n Receiver: "+bandwidth_receiver)
+    plt.yticks()
+    plt.ylim(bottom=0)  # y label start at 0
     plt.xlabel('time')
     plt.ylabel('bandwidth(bit/sec)')
     plt.tight_layout()
@@ -94,13 +106,13 @@ def show_bandwidth(time, bandwidth, bandwidth_sender, bandwidth_receiver, filena
 def unit_convert(value):
     if "K" in value:
         value = value[:-1]
-        value = float(value) * 1024
+        value = float(value+"e+3")
     elif "M" in value:
         value = value[:-1]
-        value = float(value) * 1024 * 1024
+        value = float(value+"e+6")
     elif "G" in value:
         value = value[:-1]
-        value = float(value) * 1024 * 1024 * 1024
+        value = float(value+"e+9")
     else:
         value = float(value)
     return value
