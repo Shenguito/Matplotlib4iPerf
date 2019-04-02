@@ -1,11 +1,21 @@
 # Matplotlib4iPerf
 
-Matplotlib4iPerf is an interpreter which receive a file generated from iPerf and using python library (Matplotlib) to make a graphic presentation.  
+Matplotlib4iPerf is an interpreter which receive a file generated from iPerf and using python library (Matplotlib) to make graphical presentation.  
 
-## Usage
+## iPerf
 
-Put all iPerf generated files to input directory.  
+Run iPerf server  
+$ iperf -s -D  
+
+run iPerf client  
+$ iperf -c $serverip --logfile Matpliotlib4iPerf/input/filename -t 200  
+
+## Usage 
+
+Put all iPerf generated files into input directory.  
 Than run iPerfGraph.py.  
+
+To remove all the file in the output and the input directories - simply run inputRecycle.py and outputRecycle.py.  
 
 ## Result
 
