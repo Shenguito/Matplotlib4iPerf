@@ -27,6 +27,7 @@ def run(file):
                 bandwidth_receiver = "Time: " + t + " | Bandwidth: ~" + bw
             elif "SUM" in line:
                 print("iPerf3 several connections")
+                emptyfile("multi_conn_" + filename)
                 return
             else:
                 # get time, transfer and bandwidth
@@ -47,9 +48,11 @@ def run(file):
 
         if "error" in line:
             print("iPerf3 error")
+            emptyfile("error_" + filename)
             return
         if "interrupt" in line:
             print("iPerf3 interrupted")
+            emptyfile("interrupted_" + filename)
             return
 
     # if the iPerf is not completed
@@ -60,6 +63,7 @@ def run(file):
         bandwidth_receiver
     except NameError:
         print("not finished")
+        emptyfile("not_finished_" + filename)
         return
 
     show_transfer(time, transfer, transfer_sender, transfer_receiver, filename)
@@ -81,26 +85,32 @@ def show_transfer(time, transfer, transfer_sender, transfer_receiver, filename):
     ax.set_ylabel('transfer(Bytes)')
 
     plt.tight_layout()
-    plt.show()
+    # plt.show()
 
     fig.savefig('output/'+filename+'_QT.png')
 
+    plt.close()
+
 
 def show_bandwidth(time, bandwidth, bandwidth_sender, bandwidth_receiver, filename):
-    fig = plt.figure()
+    fig, (ax) = plt.subplots(nrows=1, figsize=(12, 6))
 
-    formatter = EngFormatter(unit='bit')
+    plt.title("Sender: " + bandwidth_sender + "\n Receiver: " + bandwidth_receiver)
 
-    plt.plot(time, bandwidth)
-    plt.title("Sender: "+bandwidth_sender+"\n Receiver: "+bandwidth_receiver)
-    plt.yticks()
-    plt.ylim(bottom=0)  # y label start at 0
-    plt.xlabel('time')
-    plt.ylabel('bandwidth(bit/sec)')
+    formatter = EngFormatter(places=1, sep="\N{THIN SPACE}")
+
+    ax.plot(time, bandwidth)
+
+    ax.yaxis.set_major_formatter(formatter)
+    ax.set_ylim(bottom=0)  # y label start at 0
+    ax.set_xlabel('time')
+    ax.set_ylabel('bandwidth(bps)')
     plt.tight_layout()
     # plt.show()
 
     fig.savefig('output/'+filename+'_BW.png')
+
+    plt.close()
 
 
 def unit_convert(value):
@@ -116,6 +126,11 @@ def unit_convert(value):
     else:
         value = float(value)
     return value
+
+
+def emptyfile(filename):
+    f = open("output/" + filename, "w+")
+    f.close()
 
 
 def multifiles():
