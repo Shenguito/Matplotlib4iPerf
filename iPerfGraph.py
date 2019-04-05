@@ -81,13 +81,13 @@ def show_transfer(time, transfer, transfer_sender, transfer_receiver, filename):
 
     ax.yaxis.set_major_formatter(formatter)
     ax.set_ylim(bottom=0)  # y label start at 0
-    ax.set_xlabel('time(sec)')
-    ax.set_ylabel('transfer(Bytes)')
+    ax.set_xlabel('time [sec]')
+    ax.set_ylabel('transfer [Byte]')
 
     plt.tight_layout()
     # plt.show()
 
-    fig.savefig('output/'+filename+'_QT.png')
+    fig.savefig('output/'+filename+'_QT.pdf')
 
     plt.close()
 
@@ -103,12 +103,12 @@ def show_bandwidth(time, bandwidth, bandwidth_sender, bandwidth_receiver, filena
 
     ax.yaxis.set_major_formatter(formatter)
     ax.set_ylim(bottom=0)  # y label start at 0
-    ax.set_xlabel('time')
-    ax.set_ylabel('bandwidth(bps)')
+    ax.set_xlabel('time [sec]')
+    ax.set_ylabel('bandwidth [bps]')
     plt.tight_layout()
     # plt.show()
 
-    fig.savefig('output/'+filename+'_BW.png')
+    fig.savefig('output/'+filename+'_BW.pdf')
 
     plt.close()
 
