@@ -13,7 +13,7 @@ def run(file, ip):
     bandwidth = []
     total_bandwidth = 0
     # bug file separator
-    filename = file.name.split("/")[1]
+    filename = file.name.split("\\")[1]
     for line in file:
         # outgoing
         if "IN=wlan0 OUT=eth0" in line:
@@ -70,7 +70,7 @@ def show_transfer(time, transfer, transfer_sender, filename):
     plt.tight_layout()
     # plt.show()
 
-    fig.savefig('output/'+filename+'_QT.pdf')
+    fig.savefig('iptables_output/'+filename+'_QT.pdf')
 
     plt.close()
 
@@ -91,7 +91,7 @@ def show_bandwidth(time, bandwidth, bandwidth_sender, filename):
     plt.tight_layout()
     # plt.show()
 
-    fig.savefig('output/'+filename+'_BW.pdf')
+    fig.savefig('iptables_output/'+filename+'_BW.pdf')
 
     plt.close()
 
@@ -101,20 +101,20 @@ def getHour(hour):
 
 
 def emptyfile(filename):
-    f = open("output/" + filename, "w+")
+    f = open("iptables_output/" + filename, "w+")
     f.close()
 
 
 def multifiles():
-    for filename in os.listdir("input"):
-        with open(os.path.join("input", filename), "r") as file:
-            run(file)
+    for filename in os.listdir("iptables_input"):
+        with open(os.path.join("iptables_input", filename), "r") as file:
+            run(file, "192.168.8.70")
 
 
 def singlefile():
-    file = open("input/iptables.log", "r")
+    file = open(os.path.join("iptables_input", "iptables.log"), "r")
     run(file, "192.168.8.70")
 
 
 if __name__ == "__main__":
-    singlefile()
+    multifiles()

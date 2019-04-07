@@ -88,7 +88,7 @@ def show_transfer(time, transfer, transfer_sender, transfer_receiver, filename):
     plt.tight_layout()
     # plt.show()
 
-    fig.savefig('output/'+filename+'_QT.pdf')
+    fig.savefig('iPerf_output/'+filename+'_QT.pdf')
 
     plt.close()
 
@@ -109,7 +109,7 @@ def show_bandwidth(time, bandwidth, bandwidth_sender, bandwidth_receiver, filena
     plt.tight_layout()
     # plt.show()
 
-    fig.savefig('output/'+filename+'_BW.pdf')
+    fig.savefig('iPerf_output/'+filename+'_BW.pdf')
 
     plt.close()
 
@@ -130,18 +130,18 @@ def unit_convert(value):
 
 
 def emptyfile(filename):
-    f = open("output/" + filename, "w+")
+    f = open("iPerf_output/" + filename, "w+")
     f.close()
 
 
 def multifiles():
-    for filename in os.listdir("input"):
-        with open(os.path.join("input", filename), "r") as file:
+    for filename in os.listdir("iPerf_input"):
+        with open(os.path.join("iPerf_input", filename), "r") as file:
             run(file)
 
 
 def singlefile():
-    file = open("input/1gb_bw1mb", "r")
+    file = open(os.path.join("iPerf_input", "normal"), "r")
     run(file)
 
 
