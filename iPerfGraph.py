@@ -8,6 +8,7 @@ def run(file):
     time = []
     transfer = []
     bandwidth = []
+    # bug file separator
     filename = file.name.split("\\")[1]
     for line in file:
         if "sec" in line:

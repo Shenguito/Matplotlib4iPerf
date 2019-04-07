@@ -22,3 +22,8 @@ To remove all the file in the output and the input directories - simply run inpu
 2 graphs:  
 - 1 for Bytes transferred
 - 1 for bandwidth
+
+## Iptables
+
+It can also be used to convert iptables' logs to graph.  
+Example file: iptables.log
