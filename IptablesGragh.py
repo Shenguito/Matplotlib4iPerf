@@ -125,4 +125,7 @@ def singlefile(ip):
 
 
 if __name__ == "__main__":
+    output = "iptables_output/"
+    if not os.path.exists(output):
+        os.makedirs(output)
     multifiles("192.168.8.64")

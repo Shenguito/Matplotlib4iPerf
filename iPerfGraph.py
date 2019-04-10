@@ -146,4 +146,7 @@ def singlefile():
 
 
 if __name__ == "__main__":
+    output = "iPerf_output/"
+    if not os.path.exists(output):
+        os.makedirs(output)
     multifiles()
