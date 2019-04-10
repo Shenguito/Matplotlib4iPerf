@@ -1,6 +1,7 @@
 import re
 import os
 import datetime
+import sys
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter
 
@@ -19,9 +20,14 @@ def run(file, ip):
         if "IN=wlan0 OUT=eth0" in line:
             # defined source ip
             if "SRC="+ip in line:
+                print(line)
                 line_split = line.split("[spyke - log]")
                 dst = re.search('DST=(.*)', line_split[1]).group(1).split(" ")[0].strip()
-                dpt = re.search('DPT=(.*)', line_split[1]).group(1).split(" ")[0].strip()
+                try:
+                    dpt = re.search('DPT=(.*)', line_split[1]).group(1).split(" ")[0].strip()
+                except:
+                    print("debug: "+sys.exc_info())
+
                 len = re.search('LEN=(.*)', line_split[1]).group(1).split(" ")[0].strip()
                 # print("dst: " + dst)
                 # print("dpt: " + dpt)
@@ -45,9 +51,11 @@ def run(file, ip):
                 total_bandwidth += float(len)*8
                 transfer.append(float(len))
                 bandwidth.append(float(len)*8)
-
-    transfer_sender = "Total Time: " + str(time[-1]).rstrip('0').rstrip('.') + " sec | Total Transferred: " + str(total_transfer).rstrip('0').rstrip('.') + " Bytes"
-    bandwidth_sender = "Total Time: " + str(time[-1]).rstrip('0').rstrip('.') + " sec | Bandwidth: ~" + str(total_bandwidth/time[-1]).rstrip('0').rstrip('.') + " bps"
+    try:
+        transfer_sender = "Total Time: " + str(time[-1]).rstrip('0').rstrip('.') + " sec | Total Transferred: " + str(total_transfer).rstrip('0').rstrip('.') + " Bytes"
+        bandwidth_sender = "Total Time: " + str(time[-1]).rstrip('0').rstrip('.') + " sec | Bandwidth: ~" + str(total_bandwidth/time[-1]).rstrip('0').rstrip('.') + " bps"
+    except:
+        return
 
     show_transfer(time, transfer, transfer_sender,  filename)
     show_bandwidth(time, bandwidth, bandwidth_sender, filename)
@@ -105,16 +113,16 @@ def emptyfile(filename):
     f.close()
 
 
-def multifiles():
+def multifiles(ip):
     for filename in os.listdir("iptables_input"):
         with open(os.path.join("iptables_input", filename), "r") as file:
-            run(file, "192.168.8.70")
+            run(file, ip)
 
 
-def singlefile():
+def singlefile(ip):
     file = open(os.path.join("iptables_input", "iptables.log"), "r")
-    run(file, "192.168.8.70")
+    run(file, ip)
 
 
 if __name__ == "__main__":
-    multifiles()
+    multifiles("192.168.8.64")
