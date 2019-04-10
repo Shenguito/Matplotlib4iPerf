@@ -20,13 +20,13 @@ def run(file, ip):
         if "IN=wlan0 OUT=eth0" in line:
             # defined source ip
             if "SRC="+ip in line:
-                print(line)
                 line_split = line.split("[spyke - log]")
                 dst = re.search('DST=(.*)', line_split[1]).group(1).split(" ")[0].strip()
                 try:
                     dpt = re.search('DPT=(.*)', line_split[1]).group(1).split(" ")[0].strip()
                 except:
-                    print("debug: "+sys.exc_info())
+                    print("debug: ")
+                    print(sys.exc_info())
 
                 len = re.search('LEN=(.*)', line_split[1]).group(1).split(" ")[0].strip()
                 # print("dst: " + dst)
@@ -52,20 +52,22 @@ def run(file, ip):
                 transfer.append(float(len))
                 bandwidth.append(float(len)*8)
     try:
-        transfer_sender = "Total Time: " + str(time[-1]).rstrip('0').rstrip('.') + " sec | Total Transferred: " + str(total_transfer).rstrip('0').rstrip('.') + " Bytes"
-        bandwidth_sender = "Total Time: " + str(time[-1]).rstrip('0').rstrip('.') + " sec | Bandwidth: ~" + str(total_bandwidth/time[-1]).rstrip('0').rstrip('.') + " bps"
+        transfer_title = "IP: " + ip + "\nTotal Time: " + str(time[-1]).rstrip('0').rstrip('.') + \
+                         " sec | Total Transferred: " + unit_convert(total_transfer) + "Bytes"
+        bandwidth_title = "IP: " + ip + "\nTotal Time: " + str(time[-1]).rstrip('0').rstrip('.') + \
+                          " sec | Bandwidth: ~" + unit_convert(total_bandwidth/time[-1]) + "bps"
     except:
         return
 
-    show_transfer(time, transfer, transfer_sender,  filename)
-    show_bandwidth(time, bandwidth, bandwidth_sender, filename)
+    show_transfer(time, transfer, transfer_title,  filename)
+    show_bandwidth(time, bandwidth, bandwidth_title, filename)
 
 
-def show_transfer(time, transfer, transfer_sender, filename):
+def show_transfer(time, transfer, transfer_title, filename):
     # Figure width is doubled (2*6.4) to display nicely 2 subplots side by side.
     fig, (ax) = plt.subplots(nrows=1, figsize=(12, 6))
 
-    plt.title("Sender: " + transfer_sender)
+    plt.title("Sender: " + transfer_title)
 
     formatter = EngFormatter(places=1, sep="\N{THIN SPACE}")
     ax.plot(time, transfer)
@@ -83,10 +85,10 @@ def show_transfer(time, transfer, transfer_sender, filename):
     plt.close()
 
 
-def show_bandwidth(time, bandwidth, bandwidth_sender, filename):
+def show_bandwidth(time, bandwidth, bandwidth_title, filename):
     fig, (ax) = plt.subplots(nrows=1, figsize=(12, 6))
 
-    plt.title("Sender: " + bandwidth_sender)
+    plt.title("Sender: " + bandwidth_title)
 
     formatter = EngFormatter(places=1, sep="\N{THIN SPACE}")
 
@@ -106,6 +108,17 @@ def show_bandwidth(time, bandwidth, bandwidth_sender, filename):
 
 def getHour(hour):
     return datetime.datetime.strptime(hour, '%H:%M:%S')
+
+
+def unit_convert(value):
+    if 1024 < value < 1048576:
+        return '~' + str(round(value/1024)).rstrip('0').rstrip('.') + ' K'
+    elif 1048576 < value < 1073741824:
+        return '~' + str(round(value/1048576)).rstrip('0').rstrip('.') + ' M'
+    elif 1073741824 < value:
+        return '~' + str(round(value/1073741824)).rstrip('0').rstrip('.') + ' G'
+    else:
+        return value
 
 
 def emptyfile(filename):
@@ -128,4 +141,4 @@ if __name__ == "__main__":
     output = "iptables_output/"
     if not os.path.exists(output):
         os.makedirs(output)
-    multifiles("192.168.8.64")
+    multifiles("192.168.8.70")
