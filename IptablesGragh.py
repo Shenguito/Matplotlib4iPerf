@@ -37,7 +37,6 @@ def run(file, ip):
                 # print("date: " + date)
                 # print("time: " + getHour(dateline[2]).strftime("%H:%M:%S"))
                 # print('[%s]' % ', '.join(map(str, dateline)))
-
                 if time:
                     # print("time exists")
                     sub_time = getHour(dateline[2]) - start_time
@@ -54,9 +53,17 @@ def run(file, ip):
     try:
         transfer_title = "IP: " + ip + "\nTotal Time: " + str(time[-1]).rstrip('0').rstrip('.') + \
                          " sec | Total Transferred: " + unit_convert(total_transfer) + "Bytes"
-        bandwidth_title = "IP: " + ip + "\nTotal Time: " + str(time[-1]).rstrip('0').rstrip('.') + \
-                          " sec | Bandwidth: ~" + unit_convert(total_bandwidth/time[-1]) + "bps"
+        if time[-1] == 0:
+            bandwidth_title = "IP: " + ip + "\nTotal Time: " + str(time[-1]).rstrip('0').rstrip('.') + \
+                              " sec | Bandwidth: ~" + unit_convert_bw(total_bandwidth) + "bps"
+        elif time[-1] < 0:
+            bandwidth_title = "IP: " + ip + "\nTotal Time: " + str(time[-1]).rstrip('0').rstrip('.') + \
+                              " sec | Bandwidth: ~" + unit_convert_bw(-(total_bandwidth / time[-1])) + "bps"
+        else:
+            bandwidth_title = "IP: " + ip + "\nTotal Time: " + str(time[-1]).rstrip('0').rstrip('.') + \
+                              " sec | Bandwidth: ~" + unit_convert_bw(total_bandwidth / time[-1]) + "bps"
     except:
+        print(sys.exc_info())
         return
 
     show_transfer(time, transfer, transfer_title,  filename)
@@ -118,7 +125,18 @@ def unit_convert(value):
     elif 1073741824 < value:
         return '~' + str(round(value/1073741824)).rstrip('0').rstrip('.') + ' G'
     else:
-        return value
+        return str(value).rstrip('0').rstrip('.') + ' '
+
+
+def unit_convert_bw(value):
+    if 1024 < value < 1048576:
+        return str(round(value / 1024)).rstrip('0').rstrip('.') + ' K'
+    elif 1048576 < value < 1073741824:
+        return str(round(value / 1048576)).rstrip('0').rstrip('.') + ' M'
+    elif 1073741824 < value:
+        return str(round(value / 1073741824)).rstrip('0').rstrip('.') + ' G'
+    else:
+        return str(value).rstrip('0').rstrip('.') + ' '
 
 
 def emptyfile(filename):
