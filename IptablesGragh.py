@@ -25,7 +25,7 @@ def run(file, ip):
                 try:
                     dpt = re.search('DPT=(.*)', line_split[1]).group(1).split(" ")[0].strip()
                 except:
-                    print("debug: ")
+                    print("debug: "+line)
                     print(sys.exc_info())
 
                 len = re.search('LEN=(.*)', line_split[1]).group(1).split(" ")[0].strip()
@@ -38,18 +38,22 @@ def run(file, ip):
                 # print("time: " + getHour(dateline[2]).strftime("%H:%M:%S"))
                 # print('[%s]' % ', '.join(map(str, dateline)))
                 if time:
-                    # print("time exists")
                     sub_time = getHour(dateline[2]) - start_time
-                    # print(sub_time.total_seconds())
-                    time.append(sub_time.total_seconds())
+                    if time[-1] != sub_time.total_seconds():
+                        time.append(sub_time.total_seconds())
+                        transfer.append(float(len))
+                        bandwidth.append(float(len) * 8)
+                    else:
+                        transfer[-1] += float(len)
+                        bandwidth[-1] += (float(len) * 8)
                 else:
                     # print("time not exists")
                     time.append(0)
                     start_time = getHour(dateline[2])
+                    transfer.append(float(len))
+                    bandwidth.append(float(len) * 8)
                 total_transfer += float(len)
                 total_bandwidth += float(len)*8
-                transfer.append(float(len))
-                bandwidth.append(float(len)*8)
     try:
         transfer_title = "IP: " + ip + "\nTotal Time: " + str(time[-1]).rstrip('0').rstrip('.') + \
                          " sec | Total Transferred: " + unit_convert(total_transfer) + "Bytes"
@@ -151,7 +155,7 @@ def multifiles(ip):
 
 
 def singlefile(ip):
-    file = open(os.path.join("iptables_input", "iptables.log"), "r")
+    file = open(os.path.join("iptables_input", "4-11-19.txt"), "r")
     run(file, ip)
 
 
@@ -159,4 +163,4 @@ if __name__ == "__main__":
     output = "iptables_output/"
     if not os.path.exists(output):
         os.makedirs(output)
-    multifiles("192.168.8.70")
+    multifiles("192.168.8.65")
