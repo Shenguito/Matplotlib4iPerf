@@ -39,13 +39,24 @@ def run(file, ip):
                 # print('[%s]' % ', '.join(map(str, dateline)))
                 if time:
                     sub_time = getHour(dateline[2]) - start_time
-                    if time[-1] != sub_time.total_seconds():
+                    value = time[-1]
+                    print(value)
+                    print(time[-1])
+                    print(sub_time.total_seconds())
+
+                    if value == sub_time.total_seconds():
+                        transfer[-1] += float(len)
+                        bandwidth[-1] += (float(len) * 8)
+
+                    else:
+                        for x in range(int(value), int(sub_time.total_seconds())-1):
+                            time.append(x)
+                            transfer.append(0)
+                            bandwidth.append(0)
                         time.append(sub_time.total_seconds())
                         transfer.append(float(len))
                         bandwidth.append(float(len) * 8)
-                    else:
-                        transfer[-1] += float(len)
-                        bandwidth[-1] += (float(len) * 8)
+
                 else:
                     # print("time not exists")
                     time.append(0)
@@ -155,7 +166,7 @@ def multifiles(ip):
 
 
 def singlefile(ip):
-    file = open(os.path.join("iptables_input", "4-11-19.txt"), "r")
+    file = open(os.path.join("iptables_input", "4-12-2.txt"), "r")
     run(file, ip)
 
 
@@ -163,4 +174,4 @@ if __name__ == "__main__":
     output = "iptables_output/"
     if not os.path.exists(output):
         os.makedirs(output)
-    multifiles("192.168.8.65")
+    singlefile("192.168.8.70")
