@@ -16,55 +16,50 @@ def run(file, ip):
     # bug file separator
     filename = file.name.split("\\")[1]
     for line in file:
-        # outgoing
-        if "IN=wlan0 OUT=eth0" in line:
-            # defined source ip
-            if "SRC="+ip in line:
-                line_split = line.split("[spyke - log]")
-                dst = re.search('DST=(.*)', line_split[1]).group(1).split(" ")[0].strip()
-                try:
-                    dpt = re.search('DPT=(.*)', line_split[1]).group(1).split(" ")[0].strip()
-                except:
-                    print("debug: "+line)
-                    print(sys.exc_info())
+        # outgoing not necessary anymore
+        # defined source ip
+        if "SRC="+ip in line:
+            line_split = line.split("[spyke - log]")
 
-                len = re.search('LEN=(.*)', line_split[1]).group(1).split(" ")[0].strip()
-                # print("dst: " + dst)
-                # print("dpt: " + dpt)
-                # print("len: " + len)
-                dateline = line_split[0].split("kernel:")[0].strip().replace("  ", " ").split(" ")
-                date = dateline[0] + " " + dateline[1]
-                # print("date: " + date)
-                # print("time: " + getHour(dateline[2]).strftime("%H:%M:%S"))
-                # print('[%s]' % ', '.join(map(str, dateline)))
-                if time:
-                    sub_time = getHour(dateline[2]) - start_time
-                    value = time[-1]
-                    print(value)
-                    print(time[-1])
-                    print(sub_time.total_seconds())
+            # not used
+            dst = re.search('DST=(.*)', line_split[1]).group(1).split(" ")[0].strip()
 
-                    if value == sub_time.total_seconds():
-                        transfer[-1] += float(len)
-                        bandwidth[-1] += (float(len) * 8)
+            # destination port some times is null, due to icmp snet by smart speakers
+            # dpt = re.search('DPT=(.*)', line_split[1]).group(1).split(" ")[0].strip()
 
-                    else:
-                        for x in range(int(value), int(sub_time.total_seconds())-1):
-                            time.append(x)
-                            transfer.append(0)
-                            bandwidth.append(0)
-                        time.append(sub_time.total_seconds())
-                        transfer.append(float(len))
-                        bandwidth.append(float(len) * 8)
+            len = re.search('LEN=(.*)', line_split[1]).group(1).split(" ")[0].strip()
+            # print("dst: " + dst)
+            # print("dpt: " + dpt)
+            # print("len: " + len)
+            dateline = line_split[0].split("kernel:")[0].strip().replace("  ", " ").split(" ")
+            date = dateline[0] + " " + dateline[1]
+            # print("date: " + date)
+            # print("time: " + getHour(dateline[2]).strftime("%H:%M:%S"))
+            # print('[%s]' % ', '.join(map(str, dateline)))
+            if time:
+                sub_time = getHour(dateline[2]) - start_time
+                value = time[-1]
+
+                if value == sub_time.total_seconds():
+                    transfer[-1] += float(len)
+                    bandwidth[-1] += (float(len) * 8)
 
                 else:
-                    # print("time not exists")
-                    time.append(0)
-                    start_time = getHour(dateline[2])
+                    for x in range(int(value), int(sub_time.total_seconds())-1):
+                        time.append(x)
+                        transfer.append(0)
+                        bandwidth.append(0)
+                    time.append(sub_time.total_seconds())
                     transfer.append(float(len))
                     bandwidth.append(float(len) * 8)
-                total_transfer += float(len)
-                total_bandwidth += float(len)*8
+            else:
+                # print("time not exists")
+                time.append(0)
+                start_time = getHour(dateline[2])
+                transfer.append(float(len))
+                bandwidth.append(float(len) * 8)
+            total_transfer += float(len)
+            total_bandwidth += float(len)*8
     try:
         transfer_title = "IP: " + ip + "\nTotal Time: " + str(time[-1]).rstrip('0').rstrip('.') + \
                          " sec | Total Transferred: " + unit_convert(total_transfer) + "Bytes"
@@ -134,24 +129,24 @@ def getHour(hour):
 
 def unit_convert(value):
     if 1024 < value < 1048576:
-        return '~' + str(round(value/1024)).rstrip('0').rstrip('.') + ' K'
+        return '~' + str(round(value/1024)).rstrip('.') + ' K'
     elif 1048576 < value < 1073741824:
-        return '~' + str(round(value/1048576)).rstrip('0').rstrip('.') + ' M'
+        return '~' + str(round(value/1048576)).rstrip('.') + ' M'
     elif 1073741824 < value:
-        return '~' + str(round(value/1073741824)).rstrip('0').rstrip('.') + ' G'
+        return '~' + str(round(value/1073741824)).rstrip('.') + ' G'
     else:
-        return str(value).rstrip('0').rstrip('.') + ' '
+        return str(value).rstrip('.') + ' '
 
 
 def unit_convert_bw(value):
     if 1024 < value < 1048576:
-        return str(round(value / 1024)).rstrip('0').rstrip('.') + ' K'
+        return str(round(value / 1024)).rstrip('.') + ' K'
     elif 1048576 < value < 1073741824:
-        return str(round(value / 1048576)).rstrip('0').rstrip('.') + ' M'
+        return str(round(value / 1048576)).rstrip('.') + ' M'
     elif 1073741824 < value:
-        return str(round(value / 1073741824)).rstrip('0').rstrip('.') + ' G'
+        return str(round(value / 1073741824)).rstrip('.') + ' G'
     else:
-        return str(value).rstrip('0').rstrip('.') + ' '
+        return str(value).rstrip('.') + ' '
 
 
 def emptyfile(filename):
@@ -174,4 +169,4 @@ if __name__ == "__main__":
     output = "iptables_output/"
     if not os.path.exists(output):
         os.makedirs(output)
-    singlefile("192.168.8.70")
+    multifiles("192.168.8.64")
